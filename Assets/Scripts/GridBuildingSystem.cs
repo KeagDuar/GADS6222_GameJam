@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -11,12 +12,33 @@ public class GridBuildingSystem : MonoBehaviour
     public Tilemap mainTileMap;
     public Tilemap tempTilemap;
 
+    public GameObject mainGrid;
+
     private static Dictionary<TileType, TileBase> tileBases = new Dictionary<TileType, TileBase>();
 
     private Building temp;
     private Vector3 prevPos;
     private BoundsInt prevArea;
+    private bool placed;
 
+    [Header("Counters")]
+    public int moneyCount = 0;
+    public int electCount = 0;
+    public int waterCount = 0;
+
+    private bool notEnoughMoney;
+
+    private void OnEnable()
+    {
+        EventManager.BuildingBought += InitializeWithBuilding;
+        EventManager.NotEnoughMoney += HandleNotEnoughMoney;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.BuildingBought -= InitializeWithBuilding;
+        EventManager.NotEnoughMoney -= HandleNotEnoughMoney;
+    }
     private void Awake()
     {
         current = this;
@@ -32,6 +54,8 @@ public class GridBuildingSystem : MonoBehaviour
         Debug.Log("White tile loaded: " + tileBases[TileType.white]);
         Debug.Log("Green tile loaded: " + tileBases[TileType.green]);
         Debug.Log("Red tile loaded: " + tileBases[TileType.red]);
+
+        mainGrid.SetActive(false);
     }
 
     private void Update()
@@ -52,8 +76,7 @@ public class GridBuildingSystem : MonoBehaviour
             if (prevPos != cellPosition)
             {
                 temp.transform.position =
-                    gridLayout.CellToWorld(cellPosition) +
-                    new Vector3(0.5f, 0.5f, 0f);
+                    gridLayout.CellToWorld(cellPosition);
 
                 prevPos = cellPosition;
 
@@ -74,6 +97,8 @@ public class GridBuildingSystem : MonoBehaviour
             {
                 Debug.Log("PLACING BUILDING");
                 temp.Place();
+                placed = false;
+                mainGrid.SetActive(false);
             }
         }
 
@@ -83,6 +108,8 @@ public class GridBuildingSystem : MonoBehaviour
             ClearArea();
             Destroy(temp.gameObject);
             temp = null;
+            placed = false;
+            mainGrid.SetActive(false);
         }
     }
 
@@ -126,8 +153,43 @@ public class GridBuildingSystem : MonoBehaviour
 
     public void InitializeWithBuilding(GameObject building)
     {
-        temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
-        FollowBuilding();
+
+        if (!placed)
+        {
+            if (notEnoughMoney)
+            {
+                ClearArea();
+
+                if (temp != null)
+                {
+                    Destroy(temp.gameObject);
+                    temp = null;
+                }
+
+                placed = false;
+                mainGrid.SetActive(false);
+                Debug.Log("Not enough money");
+                return;
+            }
+
+            mainGrid.SetActive(true);
+            temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
+            if (building.gameObject.CompareTag("Money"))
+            {
+                moneyCount++;
+            }
+            else if (building.gameObject.CompareTag("Water"))
+            {
+                waterCount++;
+            }
+            else if (building.gameObject.CompareTag("Electricity"))
+            {
+                electCount++;
+            }
+            FollowBuilding();
+            placed = true;
+        }
+
     }
 
     private void ClearArea()
@@ -201,6 +263,11 @@ public class GridBuildingSystem : MonoBehaviour
     {
         SetTilesBlock(area, TileType.empty, tempTilemap);
         SetTilesBlock(area, TileType.green, mainTileMap);      
+    }
+
+    private void HandleNotEnoughMoney(bool notEnough)
+    {
+        notEnoughMoney = notEnough;
     }
 }
 

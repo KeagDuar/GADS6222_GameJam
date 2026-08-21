@@ -1,8 +1,19 @@
+using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Building : MonoBehaviour
 {
-    public bool Placed {  get; private set; }
+    public enum BuildingType
+    {
+        Water,
+        Electricity,
+        Money //data center
+    }
+
+    public BuildingType type;
+
+    public bool Placed { get; private set; }
     public BoundsInt area;
 
     public bool CanBePlaced()
@@ -25,5 +36,20 @@ public class Building : MonoBehaviour
         areaTemp.position = positionInt;
         Placed = true;
         GridBuildingSystem.current.TakeArea(areaTemp);
+        switch (type)
+        {
+            case BuildingType.Water:
+                EventManager.BuildingTypeBought?.Invoke("Water");
+                Debug.Log("Water");
+                break;
+            case BuildingType.Electricity:
+                EventManager.BuildingTypeBought?.Invoke("Electricity");
+                Debug.Log("Elect");
+                break;
+            case BuildingType.Money:
+                EventManager.BuildingTypeBought?.Invoke("Money");
+                Debug.Log("Money");
+                break;
+        }
     }
-}  
+}
