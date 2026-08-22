@@ -8,6 +8,16 @@ public class Shop : MonoBehaviour
     private int powerPlantCost = 120000;
     private GameObject purchasingBuilding;
 
+
+    private void OnEnable()
+    {
+        EventManager.ButtonClicked += Buy;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.ButtonClicked -= Buy;
+    }
     public void Buy(GameObject building)
     {
         purchasingBuilding = building;
@@ -32,7 +42,9 @@ public class Shop : MonoBehaviour
             }
             else
             {
+                Debug.Log("Not enough money");
                 EventManager.NotEnoughMoney?.Invoke(true);
+                return;
             }
         }
         else if (purchasingBuilding.gameObject.CompareTag("Electricity"))
@@ -45,7 +57,9 @@ public class Shop : MonoBehaviour
             }
             else
             {
+                Debug.Log("Not enough money");
                 EventManager.NotEnoughMoney?.Invoke(true);
+                return;
             }
         }
         else if (purchasingBuilding.gameObject.CompareTag("Money"))
@@ -58,7 +72,9 @@ public class Shop : MonoBehaviour
             }
             else
             {
+                Debug.Log("Not enough money");
                 EventManager.NotEnoughMoney?.Invoke(true);
+                return;
             }
         }
     }

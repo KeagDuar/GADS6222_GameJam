@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/MainMenu/MainMenuUSS.uss?fileID=7433441132597879392&amp;guid=7a86b43d9b7d5ef42a2d09ea328d63f2&amp;type=3#MainMenuUSS"/>
+    <ui:VisualElement name="Root" class="root" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Textures/data-center-ai-texas-getty.jpg?fileID=2800000&amp;guid=2e65f2805d8842848a444b662505126d&amp;type=3#data-center-ai-texas-getty&quot;);">
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:Label text="AInc" name="GameName" style="top: 43px; width: 339px; height: 39px; font-size: 106px; text-overflow: clip; -unity-text-align: upper-center; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0; padding-top: -43px; -unity-font-style: bold; white-space: nowrap; color: rgb(255, 0, 0); flex-direction: column;"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="ButtonsContainer" class="mainmenu" style="flex-grow: 1; width: auto; background-color: rgba(0, 0, 0, 0); -unity-background-image-tint-color: rgb(0, 0, 0); overflow: visible; opacity: 1; justify-content: space-around; align-items: stretch; align-content: flex-start; visibility: visible;">
+            <ui:Button text="Start" name="Start" class="unity-button"/>
+            <ui:Button text="Options" name="Options" enable-rich-text="true"/>
+            <ui:Button text="Exit" name="Exit" class="unity-button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

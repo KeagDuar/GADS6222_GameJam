@@ -1,7 +1,9 @@
 using NUnit.Framework.Internal;
 using System;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,15 +31,16 @@ public class GameManager : MonoBehaviour
     [Header("TickManagement")]
     float timer;
     float ticks = 1.0f;
+    public bool paused;
     private void Awake()
     {
+        instance = this;
         EventManager.Water?.Invoke(water);
         EventManager.Electricity?.Invoke(electricity);
         EventManager.Money?.Invoke(money);
     }
     private void Start()
     {
-        instance = this;
         waterBuildings = 0;
         powerPlants = 0;
         dataCenters = 0;
@@ -46,25 +49,34 @@ public class GameManager : MonoBehaviour
         money = 1000000;
         environmentHealth = 100;
         publicOpinion = 100;
+        paused = false;
     }
     private void OnEnable()
     {
         EventManager.BuildingTypeBought += HandleBuildingType;
+        EventManager.QTEGoodPressed += HandleGoodButtonPressed;
+        EventManager.QTEBadPressed += HandleBadButtonPressed;
     }
     private void OnDisable()
     {
         EventManager.BuildingTypeBought -= HandleBuildingType;
+        EventManager.QTEGoodPressed -= HandleGoodButtonPressed;
+        EventManager.QTEBadPressed -= HandleBadButtonPressed;
     }
     private void Update()
     {
         
             timer += Time.deltaTime;
 
+        if (!paused)
+        {
             if (timer >= ticks)
             {
                 GenerateResources();
                 timer = 0.0f;
             }
+        }
+
     }
 
     private void HandleBuildingType(string buildingType)
@@ -108,6 +120,7 @@ public class GameManager : MonoBehaviour
             publicOpinion -= 0.5f * dataCenters;
             environmentHealth -= 0.5f * dataCenters;
         }
+
         EventManager.Water?.Invoke(water);
         EventManager.Electricity?.Invoke(electricity);
         EventManager.Money?.Invoke(money);
@@ -118,6 +131,24 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Is this the world you want to create?");
 
+        }
+    }
+
+    private void HandleGoodButtonPressed(bool pressed)
+    {
+        if (pressed)
+        {
+            publicOpinion += 10;
+            environmentHealth += 10;
+        }
+    }
+
+    private void HandleBadButtonPressed(bool pressed)
+    {
+        if (pressed)
+        {
+            publicOpinion -= 5;
+            environmentHealth -= 5;
         }
     }
 

@@ -20,6 +20,9 @@ public class UIManager : MonoBehaviour
         HandleMoney(100000);
         HandleEnvironment(100);
         HandleOpinion(100);
+        _elect.color = Color.yellow;
+        _water.color = Color.blue;
+        _money.color = Color.green;
     }
     private void OnEnable()
     {
@@ -53,7 +56,7 @@ public class UIManager : MonoBehaviour
         {
             _water.color = Color.red;
         }
-        string waterDisplay = water.ToString("N2", CultureInfo.InvariantCulture);
+        string waterDisplay = water.ToString("N2", CultureInfo.InvariantCulture) + "L";
         _water.text = waterDisplay;
     }
 

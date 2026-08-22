@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8135123159784908886}
+  - {fileID: 5278438768404616322}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-9086682754668372919
@@ -48,8 +48,8 @@ MonoBehaviour:
   type: 1
   area:
     m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 8, y: 8, z: 1}
---- !u!1 &8141300213994115456
+    m_Size: {x: 4, y: 4, z: 1}
+--- !u!1 &4399908674993296799
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,38 +57,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8135123159784908886}
-  - component: {fileID: 5977906334776288172}
+  - component: {fileID: 5278438768404616322}
+  - component: {fileID: 3371848473635766393}
   m_Layer: 0
-  m_Name: Building
+  m_Name: Isometric Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8135123159784908886
+--- !u!4 &5278438768404616322
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8141300213994115456}
+  m_GameObject: {fileID: 4399908674993296799}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.5, z: 0}
-  m_LocalScale: {x: 16, y: 16, z: 16}
+  m_LocalPosition: {x: 0, y: 1.05, z: 0}
+  m_LocalScale: {x: 8, y: 8, z: 8}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7526360629634492260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5977906334776288172
+--- !u!212 &3371848473635766393
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8141300213994115456}
+  m_GameObject: {fileID: 4399908674993296799}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -131,7 +131,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 3625043607559282579, guid: 19fb86013d8c24d6cb8410c0aadf30fa, type: 3}
-  m_Color: {r: 1, g: 0.97803795, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.9728836, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

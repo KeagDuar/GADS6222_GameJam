@@ -19,7 +19,6 @@ public class GridBuildingSystem : MonoBehaviour
     private Building temp;
     private Vector3 prevPos;
     private BoundsInt prevArea;
-    private bool placed;
 
     [Header("Counters")]
     public int moneyCount = 0;
@@ -28,16 +27,24 @@ public class GridBuildingSystem : MonoBehaviour
 
     private bool notEnoughMoney;
 
+    [Header("QTE's")]
+    private bool goodButtonPressed;
+    private bool badButtonPressed;
+
     private void OnEnable()
     {
         EventManager.BuildingBought += InitializeWithBuilding;
         EventManager.NotEnoughMoney += HandleNotEnoughMoney;
+        EventManager.QTEGoodPressed += HandleGoodButtonPressed;
+        EventManager.QTEBadPressed += HandleBadButtonPressed;
     }
 
     private void OnDisable()
     {
         EventManager.BuildingBought -= InitializeWithBuilding;
         EventManager.NotEnoughMoney -= HandleNotEnoughMoney;
+        EventManager.QTEGoodPressed -= HandleGoodButtonPressed;
+        EventManager.QTEBadPressed -= HandleBadButtonPressed;
     }
     private void Awake()
     {
@@ -46,16 +53,36 @@ public class GridBuildingSystem : MonoBehaviour
 
     private void Start()
     {
-        tileBases.Add(TileType.empty, null);
-        tileBases.Add(TileType.white, Resources.Load<TileBase>("Tiles/white"));
-        tileBases.Add(TileType.green, Resources.Load<TileBase>("Tiles/green"));
-        tileBases.Add(TileType.red, Resources.Load<TileBase>("Tiles/red"));
+        tileBases.Clear();
+
+        tileBases.Add(
+            TileType.empty,
+            null
+        );
+
+        tileBases.Add(
+            TileType.white,
+            Resources.Load<TileBase>("Tiles/white")
+        );
+
+        tileBases.Add(
+            TileType.green,
+            Resources.Load<TileBase>("Tiles/green")
+        );
+
+        tileBases.Add(
+            TileType.red,
+            Resources.Load<TileBase>("Tiles/red")
+        );
+
 
         Debug.Log("White tile loaded: " + tileBases[TileType.white]);
         Debug.Log("Green tile loaded: " + tileBases[TileType.green]);
         Debug.Log("Red tile loaded: " + tileBases[TileType.red]);
 
         mainGrid.SetActive(false);
+        goodButtonPressed = false;
+        badButtonPressed = false;
     }
 
     private void Update()
@@ -96,8 +123,11 @@ public class GridBuildingSystem : MonoBehaviour
             if (canPlace)
             {
                 Debug.Log("PLACING BUILDING");
+
                 temp.Place();
-                placed = false;
+
+                temp = null;
+
                 mainGrid.SetActive(false);
             }
         }
@@ -105,11 +135,7 @@ public class GridBuildingSystem : MonoBehaviour
         // Cancel building
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            ClearArea();
-            Destroy(temp.gameObject);
-            temp = null;
-            placed = false;
-            mainGrid.SetActive(false);
+            CancelBuilding();
         }
     }
 
@@ -153,43 +179,40 @@ public class GridBuildingSystem : MonoBehaviour
 
     public void InitializeWithBuilding(GameObject building)
     {
-
-        if (!placed)
+        if (temp != null)
         {
-            if (notEnoughMoney)
-            {
-                ClearArea();
-
-                if (temp != null)
-                {
-                    Destroy(temp.gameObject);
-                    temp = null;
-                }
-
-                placed = false;
-                mainGrid.SetActive(false);
-                Debug.Log("Not enough money");
-                return;
-            }
-
-            mainGrid.SetActive(true);
-            temp = Instantiate(building, Vector3.zero, Quaternion.identity).GetComponent<Building>();
-            if (building.gameObject.CompareTag("Money"))
-            {
-                moneyCount++;
-            }
-            else if (building.gameObject.CompareTag("Water"))
-            {
-                waterCount++;
-            }
-            else if (building.gameObject.CompareTag("Electricity"))
-            {
-                electCount++;
-            }
-            FollowBuilding();
-            placed = true;
+            Debug.Log("Already placing a building!");
+            return;
         }
 
+        if (notEnoughMoney)
+        {
+            Debug.Log("Not enough money");
+            return;
+        }
+
+        mainGrid.SetActive(true);
+
+        temp = Instantiate(
+            building,
+            Vector3.zero,
+            Quaternion.identity
+        ).GetComponent<Building>();
+
+        if (building.CompareTag("Money"))
+        {
+            moneyCount++;
+        }
+        else if (building.CompareTag("Water"))
+        {
+            waterCount++;
+        }
+        else if (building.CompareTag("Electricity"))
+        {
+            electCount++;
+        }
+
+        FollowBuilding();
     }
 
     private void ClearArea()
@@ -268,6 +291,46 @@ public class GridBuildingSystem : MonoBehaviour
     private void HandleNotEnoughMoney(bool notEnough)
     {
         notEnoughMoney = notEnough;
+
+        if (!notEnough)
+            return;
+
+        CancelBuilding();
+
+        EventManager.BuildingCancelled?.Invoke(true);
+    }
+
+    private void HandleGoodButtonPressed(bool pressed)
+    {
+        if (!pressed)
+            return;
+
+        CancelBuilding();
+    }
+
+    private void HandleBadButtonPressed(bool pressed)
+    {
+        Debug.Log("BAD BUTTON EVENT RECEIVED");
+
+        badButtonPressed = true;
+        goodButtonPressed = false;
+    }
+    private void CancelBuilding()
+    {
+        if (temp == null)
+            return;
+
+        EventManager.BuildingCancelled?.Invoke(true);
+        ClearArea();
+
+        Destroy(temp.gameObject);
+
+        temp = null;
+
+        mainGrid.SetActive(false);
+
+        goodButtonPressed = false;
+        badButtonPressed = false;
     }
 }
 
